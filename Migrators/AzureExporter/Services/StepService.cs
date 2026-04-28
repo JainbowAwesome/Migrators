@@ -57,10 +57,13 @@ public class StepService : IStepService
 
     private static Step ConvertStep(AzureStep azureStep)
     {
+        var action = azureStep.Values.ElementAtOrDefault(0)?.GetValue() ?? string.Empty;
+        var expected = azureStep.Values.ElementAtOrDefault(1)?.GetValue() ?? string.Empty;
+
         return new Step
         {
-            Action = azureStep.Values[0],
-            Expected = azureStep.Values[1],
+            Action = action,
+            Expected = expected,
             ActionAttachments = new List<string>(),
             ExpectedAttachments = new List<string>(),
             TestDataAttachments = new List<string>(),

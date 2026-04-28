@@ -15,7 +15,7 @@ public class AzureSteps
 public class AzureStep
 {
     [XmlElement("parameterizedString")]
-    public List<string> Values { get; set; }
+    public List<AzureParameterizedString> Values { get; set; }
 }
 
 public class AzureSharedStep
@@ -25,4 +25,20 @@ public class AzureSharedStep
 
     [XmlElement("step")]
     public List<AzureStep> Steps { get; set; }
+}
+
+public class AzureParameterizedString
+{
+    // plain text
+    [XmlText]
+    public string TextValue { get; set; } = string.Empty;
+
+    // <text> tag
+    [XmlElement("text")]
+    public string WrappedTextValue { get; set; } = string.Empty;
+
+    public string GetValue()
+    {
+        return string.IsNullOrEmpty(WrappedTextValue) ? TextValue : WrappedTextValue;
+    }
 }
