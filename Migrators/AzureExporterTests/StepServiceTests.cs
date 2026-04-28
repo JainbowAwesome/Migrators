@@ -322,4 +322,91 @@ public class StepServiceTests
         Assert.That(result[2].ActionAttachments, Is.EqualTo(expectedSteps[2].ActionAttachments));
         Assert.That(result[2].SharedStepId, Is.EqualTo(expectedSteps[2].SharedStepId));
     }
+
+    [Test]
+    public void ConvertSteps_ShouldParseNestedTextElementInParameterizedString()
+    {
+        // Arrange
+        var stepService = new StepService(_logger);
+        const string context = @"<steps id=""0"" last=""1"">
+    <step id=""1"" type=""ValidateStep"">
+        <parameterizedString><text>Action with nested text</text></parameterizedString>
+        <parameterizedString><text>Expected with nested text</text></parameterizedString>
+        <description></description>
+    </step>
+</steps>";
+
+        // Act
+        var result = stepService.ConvertSteps(context, new Dictionary<int, Guid>());
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        Assert.That(result[0].Action, Is.EqualTo("Action with nested text"));
+        Assert.That(result[0].Expected, Is.EqualTo("Expected with nested text"));
+    }
+
+    [Test]
+    public void ConvertSteps_ShouldParseMixedParameterizedStringFormats()
+    {
+        // Arrange
+        var stepService = new StepService(_logger);
+        const string context = @"<steps id=""0"" last=""2"">
+    <step id=""1"" type=""ValidateStep"">
+        <parameterizedString isformatted=""true"">&lt;P&gt;Plain serialized text&lt;/P&gt;</parameterizedString>
+        <parameterizedString><text>Nested expected text</text></parameterizedString>
+        <description></description>
+    </step>
+    <step id=""2"" type=""ValidateStep"">
+        <parameterizedString><text>Nested action text</text></parameterizedString>
+        <parameterizedString isformatted=""true"">&lt;DIV&gt;&lt;P&gt;Plain expected text&lt;/P&gt;&lt;/DIV&gt;</parameterizedString>
+        <description></description>
+    </step>
+</steps>";
+
+        // Act
+        var result = stepService.ConvertSteps(context, new Dictionary<int, Guid>());
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(2));
+        Assert.That(result[0].Action, Is.EqualTo("<P>Plain serialized text</P>"));
+        Assert.That(result[0].Expected, Is.EqualTo("Nested expected text"));
+        Assert.That(result[1].Action, Is.EqualTo("Nested action text"));
+        Assert.That(result[1].Expected, Is.EqualTo("<DIV><P>Plain expected text</P></DIV>"));
+    }
+
+    [Test]
+    public void ConvertSteps_ShouldParseNestedTextInsideSharedSteps()
+    {
+        // Arrange
+        var stepService = new StepService(_logger);
+        var sharedStepId = Guid.NewGuid();
+        const string context = @"<steps id=""0"" last=""3"">
+    <step id=""1"" type=""ValidateStep"">
+        <parameterizedString><text>Main action</text></parameterizedString>
+        <parameterizedString><text>Main expected</text></parameterizedString>
+        <description></description>
+    </step>
+    <compref id=""2"" ref=""99"">
+        <step id=""3"" type=""ValidateStep"">
+            <parameterizedString><text>Shared action nested</text></parameterizedString>
+            <parameterizedString><text>Shared expected nested</text></parameterizedString>
+            <description></description>
+        </step>
+    </compref>
+</steps>";
+
+        // Act
+        var result = stepService.ConvertSteps(context, new Dictionary<int, Guid>
+        {
+            { 99, sharedStepId }
+        });
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(3));
+        Assert.That(result[0].Action, Is.EqualTo("Main action"));
+        Assert.That(result[0].Expected, Is.EqualTo("Main expected"));
+        Assert.That(result[1].SharedStepId, Is.EqualTo(sharedStepId));
+        Assert.That(result[2].Action, Is.EqualTo("Shared action nested"));
+        Assert.That(result[2].Expected, Is.EqualTo("Shared expected nested"));
+    }
 }
