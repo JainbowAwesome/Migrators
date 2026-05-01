@@ -4,6 +4,7 @@
     "url": "https://instance.testrail.io/",
     "login": "User",
     "password": "pass",
-    "projectName": "ProjectName"
+    "projectName": "ProjectName",
+    "requestTimeoutSeconds": 100
   }
 }

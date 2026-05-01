@@ -40,6 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient("ClientApi", (sp, client) =>
         {
             var config = sp.GetRequiredService<IOptions<AppConfig>>();
+            client.Timeout = TimeSpan.FromSeconds(config.Value.TestRail.RequestTimeoutSeconds);
         })
 
             .AddPolicyHandler((provider, request) =>

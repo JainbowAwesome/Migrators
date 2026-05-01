@@ -15,6 +15,8 @@ public class AppConfigValidator : IValidateOptions<AppConfig>
             throw new ArgumentException("Url is not specified");
         if (string.IsNullOrEmpty(options.TestRail.ProjectName))
             throw new ArgumentException("Project name is not specified");
+        if (options.TestRail.RequestTimeoutSeconds <= 0)
+            throw new ArgumentException("Request timeout seconds must be greater than 0");
 
         return ValidateOptionsResult.Success;
     }
