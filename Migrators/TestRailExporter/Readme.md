@@ -17,7 +17,8 @@ You can download the latest version of the TestRailExporter from the [releases](
     "url": "https://instance.testrail.io/",
     "login": "User",
     "password": "pass",
-    "projectName": "ProjectName"
+    "projectName": "ProjectName",
+    "requestTimeoutSeconds": 100
   }
 }
 ```
@@ -29,6 +30,7 @@ Where:
 - testrail.login - login to the TestRail server
 - testrail.password - password to the TestRail server
 - testrail.projectName - key of the project in the TestRail server
+- testrail.requestTimeoutSeconds - HTTP request timeout in seconds (must be greater than 0)
 
 1. Run the exporter with the following command:
 

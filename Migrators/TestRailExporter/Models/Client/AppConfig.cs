@@ -13,6 +13,9 @@ public class TestRailConfig
     public string Login { get; set; } = string.Empty;
     [Required]
     public string Password { get; set; } = string.Empty;
+
+    [Range(1, int.MaxValue)]
+    public int RequestTimeoutSeconds { get; set; } = 100;
 }
 
 public class AppConfig
