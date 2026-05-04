@@ -51,6 +51,9 @@ namespace QaseExporter
                 )
                 .ConfigureServices((_, services) =>
                 {
+                    services.AddHttpClient("DefaultHttpClient");
+                    services.AddHttpClient("AppHttpClient");
+
                     services.AddSingleton<App>();
                     services.AddSingleton(SetupConfiguration());
                     services.AddSingleton<IWriteService, WriteService>();
