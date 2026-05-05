@@ -117,11 +117,11 @@ public class Client : IClient
         }
 
         var content = await response.Content.ReadAsStringAsync();
-        var suites = JsonSerializer.Deserialize<List<TestRailSuite>>(content)!;
+        var suites = JsonSerializer.Deserialize<TestRailSuites>(content)!;
 
-        _logger.LogDebug("Got {Count} suites by project id {Id}: {@Suites}", suites.Count, projectId, suites);
+        _logger.LogDebug("Got {Count} suites by project id {Id}: {@Suites}", suites.Suites.Count, projectId, suites);
 
-        return suites;
+        return suites.Suites;
     }
 
     public async Task<List<TestRailSection>> GetSectionsByProjectId(int projectId)

@@ -13,3 +13,9 @@ public class TestRailSuite
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
 }
+
+public class TestRailSuites
+{
+    [JsonPropertyName("suites")]
+    public List<TestRailSuite> Suites { get; set; } = new();
+}
